@@ -1,15 +1,15 @@
 REM  *****  BASIC  *****
 ' Sets up Global var's
 ' Also when running this code always click inside of the Sub Main
-Global currDoc as Object
-Global currSheet as Object
+Global currentDoc as Object
+Global currentSheet as Object
 Global outputCell as Object
 Global invoiceCell as Object
 Global inputCell as Object
 
 Sub Main
-	currDoc = ThisComponent ' I get what doc your working in
-	currSheet = currDoc.sheets(0) ' I get the first sheet in the doc
+	currentDoc = ThisComponent ' I get what doc your working in
+	currentSheet = currentDoc.sheets(0) ' I get the first sheet in the doc
 
 	Dim invoiceNumber as String
 	Dim lastCellID as Integer
@@ -24,11 +24,11 @@ Sub Main
 	' Tell me(whatToReplace) what to replace
 	whatToReplace = "1884"
 	
-	' I seach and replace the invoice numbers to be the right ones
+	' I search and replace the invoice numbers to be the right ones
 	for i = 4 To lastCellID Step 1
-		inputCell = currSheet.getCellByPosition(rowID, i)
-		invoiceCell = currSheet.getCellByPosition(0, i)
-		outputCell = currSheet.getCellByPosition(rowID, i)
+		inputCell = currentSheet.getCellByPosition(rowID, i)
+		invoiceCell = currentSheet.getCellByPosition(0, i)
+		outputCell = currentSheet.getCellByPosition(rowID, i)
 
 		invoiceNumber = invoiceCell.value
 		newInvoiceNumber = Replace(inputCell.formula, whatToReplace, invoiceNumber)
@@ -41,8 +41,8 @@ End Sub
 Function GetRange(cellName as Variant) as Integer
 	Dim Cur as Object
 	Dim Range as Object
-	Cur = currSheet.createCursorByRange(currSheet.getCellRangeByName(cellName))
+	Cur = currentSheet.createCursorByRange(currentSheet.getCellRangeByName(cellName))
 	Cur.gotoEndOfUsedArea(True)
-	Range = currSheet.getCellRangeByName(Cur.AbsoluteName)
+	Range = currentSheet.getCellRangeByName(Cur.AbsoluteName)
 	GetRange = Range.RangeAddress.EndRow
 End Function
