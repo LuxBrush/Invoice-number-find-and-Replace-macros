@@ -1,5 +1,5 @@
 REM  *****  BASIC  *****
-' Sets up Global var's
+' Sets up Global variables
 ' Also when running this code always click inside of the Sub Main
 Global currentDoc as Object
 Global currentSheet as Object
@@ -12,37 +12,38 @@ Sub Main
 	currentSheet = currentDoc.sheets(0) ' I get the first sheet in the doc
 
 	Dim invoiceNumber as String
-	Dim lastCellID as Integer
-	Dim rowID as Integer
 	Dim whatToReplace as String
 	Dim newInvoiceNumber As String
-	
-	' tell me(lastCellID) where the last cell is
-	lastCellID = 63
-	' tell me(rowID) which row to look at
-	rowID = 13
-	' Tell me(whatToReplace) what to replace
-	whatToReplace = "1884"
-	
-	' I search and replace the invoice numbers to be the right ones
-	for i = 4 To lastCellID Step 1
-		inputCell = currentSheet.getCellByPosition(rowID, i)
-		invoiceCell = currentSheet.getCellByPosition(0, i)
-		outputCell = currentSheet.getCellByPosition(rowID, i)
 
-		invoiceNumber = invoiceCell.value
-		newInvoiceNumber = Replace(inputCell.formula, whatToReplace, invoiceNumber)
-		outputCell.formula = newInvoiceNumber
-	Next
+	whatToReplace = "1884"
+
+	updateInviceNumber(whatToReplace)
 	
 End Sub
 
-'TODO: Not used and needs to be fixed so it only checks one collum
-Function GetRange(cellName as Variant) as Integer
-	Dim Cur as Object
-	Dim Range as Object
-	Cur = currentSheet.createCursorByRange(currentSheet.getCellRangeByName(cellName))
-	Cur.gotoEndOfUsedArea(True)
-	Range = currentSheet.getCellRangeByName(Cur.AbsoluteName)
-	GetRange = Range.RangeAddress.EndRow
+Function updateInviceNumber(whatToReplace as String)
+	Dim selectedCell as Object ' I get the current user selected cell
+	Dim cellAddress as Object ' I get the current cell address
+	Dim isCellEmpty as boolean ' I check if the cell is empty
+	Dim counter as Integer ' I count how many times the loop runs
+	
+	selectedCell = ThisComponent.getCurrentSelection()
+	cellAddress = selectedCell.CellAddress
+	isCellEmpty = False
+	counter = 0
+	
+	While isCellEmpty = False
+		currentCell = currentSheet.getCellByPosition(cellAddress.column, cellAddress.row + counter) ' I get the current cell for the loop.
+		If currentCell.Formula = "" Then
+			isCellEmpty = True
+		Else
+			inputCell = currentSheet.getCellByPosition(cellAddress.column, cellAddress.row + counter) ' I get the input cell that has what needs to be changed.
+			invoiceCell = currentSheet.getCellByPosition(0, cellAddress.row + counter) ' I get the invoice numbers from the first column of the sheet.
+			outputCell = currentSheet.getCellByPosition(cellAddress.column, cellAddress.row + counter) ' I set the output cell for the new formula.
+			invoiceNumber = invoiceCell.value
+			newInvoiceNumber = Replace(inputCell.formula, whatToReplace, invoiceNumber) ' I find and replace the invoice number in the formula.
+			outputCell.formula = newInvoiceNumber ' I set the output cell to have the updated formula.
+			counter = counter + 1
+		End If		
+	Wend	
 End Function
