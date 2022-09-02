@@ -1,6 +1,7 @@
 REM  *****  BASIC  *****
 ' Sets up Global variables
 ' Also when running this code always click inside of the Sub Main
+' This is a test.
 Global currentDoc as Object
 Global currentSheet as Object
 Global outputCell as Object
